@@ -1,6 +1,8 @@
 #!/bin/bash
+
 # WIFI.sh by AHMED NOAMAN
 # email: an758592@gmail.com
+# github: https://github.com/an758592/WIFI
 
 # Terms of Use for WIFI.sh Script.
 echo "By using the WIFI.sh script you agree to the following terms and conditions:"
@@ -28,39 +30,35 @@ clear
 
 # Check if the script is being run with sudo.
 if [ "$(id -u)" != 0 ]; then
-    echo "Please, run the script as root or use : [sudo]."
+    echo "Run the script as ROOT or use SUDO"
     exit
 fi
 
 # Check if necessary tools are installed.
-required_tools=("aircrack-ng" "airodump-ng" "airmon-ng" "reaver")
+required_tools=("aircrack-ng" "airodump-ng" "airmon-ng" "reaver" "ifconfig")
 for tool in "${required_tools[@]}"; do
     if ! command -v "$tool"; then
-        echo "Required tool '$tool' not found. Please install it and try again."
+        echo "Required tool '$tool' not found. install it and try again."
         exit
     fi
 done
 
 clear
-
-ip add
+ifconfig
 
 # Prompt the user to enter the wireless interface to be used.
 read -p "Enter the interface [default=wlan0] : " interface
 interface=${interface:-wlan0}
 
 # Prompt the user to enter the path to save captured data.
-read -p "Enter the path to the capfile [default=/home/user/] : " cap
-cap=${cap:-/home/"$USER"/}
+read -p "Enter the path to the capfile : " cap
 
 # Prompt the user to enter the path to the wordlist file for password cracking.
-read -p "Enter the path to the wordlist [default=/home/user/wordlist.txt] : " wordlist
-wordlist=${wordlist:-/home/"$USER"/wordlist.txt}
+read -p "Enter the path to the wordlist : " wordlist
 
 # Start monitor mode.
 airmon-ng check kill
 airmon-ng start "$interface"
-
 clear
 
 # Prompt the user to select mode.
