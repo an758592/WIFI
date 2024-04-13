@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# this CODE for Wordlists MANipulation
+
 menu() {
     echo "What do you want to do?"
     echo "1) Remove duplicates"
