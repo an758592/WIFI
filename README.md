@@ -38,7 +38,7 @@ Ensure that you have the following tools installed on your system:
 1. **Clone the Repository:**
 
    ```sh
-   git clone https://github.com/yourusername/dumphcx.git
+   git clone https://github.com/an758592/dumphcx.git
    cd dumphcx
    ```
 
