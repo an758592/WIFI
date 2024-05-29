@@ -71,7 +71,7 @@ Ensure that you have the following tools installed on your system:
 ## Example
 
 ```sh
-sudo ./dumphcx.sh
+sudo ./DumpHCX.sh
 ```
 
 Follow the prompts to configure the interface, capture packets, and optionally crack the hash.
