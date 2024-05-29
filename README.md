@@ -38,14 +38,14 @@ Ensure that you have the following tools installed on your system:
 1. **Clone the Repository:**
 
    ```sh
-   git clone https://github.com/an758592/dumphcx.git
-   cd dumphcx
+   git clone https://github.com/an758592/WIFI.git
+   cd WIFI
    ```
 
 2. **Run the Script:**
 
    ```sh
-   sudo ./dumphcx.sh
+   sudo ./DumpHCX.sh
    ```
 
 3. **Accept the Terms:**
