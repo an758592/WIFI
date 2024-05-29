@@ -45,7 +45,7 @@ Ensure that you have the following tools installed on your system:
 2. **Run the Script:**
 
    ```sh
-   sudo ./DumpHCX.sh
+   sudo bash ./DumpHCX.sh
    ```
 
 3. **Accept the Terms:**
@@ -71,7 +71,7 @@ Ensure that you have the following tools installed on your system:
 ## Example
 
 ```sh
-sudo ./DumpHCX.sh
+sudo bash ./DumpHCX.sh
 ```
 
 Follow the prompts to configure the interface, capture packets, and optionally crack the hash.
