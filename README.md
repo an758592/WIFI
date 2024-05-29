@@ -1,6 +1,6 @@
 # DumpHCX Script
 
-This script, **DumpHCX**, is a Bash script designed for educational and testing purposes. It captures wireless packets, converts them into hash files, and optionally cracks the hashes using `hashcat`.
+**DumpHCX** is a Bash script designed for educational and testing purposes. It captures wireless packets, converts them into hash files, and optionally cracks the hashes using `hashcat`.
 
 ## Author
 
@@ -27,9 +27,8 @@ By using this script, you agree to the following terms:
 
 Ensure that you have the following tools installed on your system:
 
+- `hcxtools`
 - `hcxdumptool`
-- `hcxpcapngtool`
-- `ifconfig`
 - `wget`
 - `gzip`
 - `hashcat`
@@ -91,4 +90,3 @@ If you encounter any issues or have questions, please contact:
 ---
 
 **Disclaimer:** The use of this script must comply with all applicable laws and regulations. Unauthorized use of this script for malicious purposes is strictly prohibited.
-```
