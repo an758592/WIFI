@@ -4,7 +4,7 @@
 # email  : an758592@gmail.com
 # github : https://github.com/an758592/
 
-tools=("hcxtools" "hcxdumptool" "wget" "gzip" "iw" "hashcat")
+tools=("hcxtools" "wget" "gzip" "iw" "hashcat")
 interface="wlan0"
 wordlist="/usr/share/wordlists/cracked.txt"
 
