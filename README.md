@@ -1,4 +1,4 @@
-# DumpHCX Script
+# DumpHCX
 
 **DumpHCX** is a Bash script designed for educational and testing purposes. It captures wireless packets, converts them into hash files, and optionally cracks the hashes using `hashcat`.
 
