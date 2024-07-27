@@ -78,7 +78,3 @@ If you encounter any issues or have questions, please contact:
 
 - **Email:** an758592@gmail.com
 - **GitHub Issues:** [Issues](https://github.com/an758592/WIFI/issues)
-
----
-
-**Disclaimer:** The use of this script must comply with all applicable laws and regulations. Unauthorized use of this script for malicious purposes is strictly prohibited.
