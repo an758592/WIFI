@@ -4,7 +4,7 @@
 # email  : an758592@gmail.com
 # github : https://github.com/an758592/
 
-tools=("hcxtools" "hcxdumptool" "wget" "gzip" "hashcat")
+tools=("hcxtools" "hcxdumptool" "wget" "gzip" "iw" "hashcat")
 interface="wlan0"
 wordlist="/usr/share/wordlists/cracked.txt"
 
@@ -78,8 +78,8 @@ case $terms in
 		read -p "> Enter the PATH and NAME to save the capfile [/path/name] : " cap
 		cap=${cap:-"$(pwd)/$(date +%T)"}
 		
-		systemctl stop NetworkManager.service
 		systemctl stop wpa_supplicant.service
+		systemctl stop NetworkManager.service
 		systemctl daemon-reload
 		ip link set $interface down
 		iw dev $interface set type monitor
@@ -89,8 +89,8 @@ case $terms in
 		ip link set $interface down
 		iw dev $interface set type managed
 		ip link set $interface up
-		systemctl start NetworkManager.service
 		systemctl start wpa_supplicant.service
+		systemctl start NetworkManager.service
 		systemctl daemon-reload
 
 		read -p "> Start password cracking with HASHCAT? [y/n] : " crack
