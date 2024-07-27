@@ -68,14 +68,6 @@ Ensure that you have the following tools installed on your system:
 
    You will be prompted to start password cracking with `hashcat`. You can choose to download a wordlist, use an existing wordlist, or specify another wordlist.
 
-## Example
-
-```sh
-sudo bash ./DumpHCX.sh
-```
-
-Follow the prompts to configure the interface, capture packets, and optionally crack the hash.
-
 ## License
 
 This script is provided under the terms specified in the disclaimer. Use it ethically and responsibly.
@@ -85,7 +77,7 @@ This script is provided under the terms specified in the disclaimer. Use it ethi
 If you encounter any issues or have questions, please contact:
 
 - **Email:** an758592@gmail.com
-- **GitHub Issues:** [Issues](https://github.com/an758592/dumphcx/issues)
+- **GitHub Issues:** [Issues](https://github.com/an758592/WIFI/issues)
 
 ---
 
