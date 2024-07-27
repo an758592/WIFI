@@ -32,6 +32,7 @@ Ensure that you have the following tools installed on your system:
 - `wget`
 - `gzip`
 - `hashcat`
+- `iw`
 
 ## Usage
 
