@@ -33,7 +33,6 @@ Ensure that you have the following tools installed on your system:
 - `gzip`
 - `iw`
 - `hashcat`
-- `gamemode`
 
 ## Usage
 
