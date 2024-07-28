@@ -115,7 +115,7 @@ case $terms in
 						exit
 						;;
 				esac
-				gamemode hashcat -a 0 -m 22000 $cap.hash $wordlist
+				gamemoderun hashcat -a 0 -m 22000 $cap.hash $wordlist
 				exit
 				;;
 			*)
