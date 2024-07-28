@@ -28,10 +28,12 @@ By using this script, you agree to the following terms:
 Ensure that you have the following tools installed on your system:
 
 - `hcxtools`
+- `hcxdumptool`
 - `wget`
 - `gzip`
-- `hashcat`
 - `iw`
+- `hashcat`
+- `gamemode`
 
 ## Usage
 
