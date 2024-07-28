@@ -4,7 +4,7 @@
 # email  : an758592@gmail.com
 # github : https://github.com/an758592/
 
-tools=("hcxtools" "wget" "gzip" "iw" "hashcat")
+tools=("hcxtools" "hcxdumptool" "wget" "gzip" "iw" "hashcat" "gamemode")
 interface="wlan0"
 wordlist="/usr/share/wordlists/cracked.txt"
 
@@ -115,7 +115,7 @@ case $terms in
 						exit
 						;;
 				esac
-				hashcat -m 22000 $cap.hash $wordlist
+				gamemode hashcat -a 0 -m 22000 $cap.hash $wordlist
 				exit
 				;;
 			*)
