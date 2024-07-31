@@ -70,6 +70,9 @@ function install_tools {
                     dnf update -y
                     dnf install $tool -y
                     ;;
+                arch)
+                    pacman -S --noconfirm $tool
+                    ;;
                 *)
                     echo -e "${RED}> Install $tool MANUALLY, and try again.${RESET}"
                     exit 1
