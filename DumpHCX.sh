@@ -1,10 +1,10 @@
 #!/bin/bash
 
-# Coded by Ahmed Noaman and some help of ChatGPT
+# Coded by Ahmed Noaman with some help of ChatGPT
 # email  : an758592@gmail.com
 # github : https://github.com/an758592/
 
-# List of required tools
+# Variables
 tools=("hcxtools" "hcxdumptool" "wget" "gzip" "iw" "hashcat")
 default_interface="wlan0"
 default_wordlist="/usr/share/wordlists/cracked.txt"
@@ -17,7 +17,6 @@ RESET='\033[0m'
 # Function to print the banner
 function print_banner {
     clear
-    echo ""
     echo -e "${RED}██  ██  ██  ██████  ██████████${RESET}"
     echo -e "${RED}██  ██  ██    ██    ██      ██${RESET}"
     echo -e "${RED}██  ██  ██    ██    ████    ██${RESET}"
@@ -28,17 +27,17 @@ function print_banner {
 
 # Function to print terms and conditions
 function print_terms {
-    echo "- By using this script you agree to the following terms :"
-    echo "+ Usage           : The script is for educational and testing purposes only, and users must have the necessary permissions for security testing on wireless networks."
-    echo "+ Responsibility  : Users are solely responsible for their actions using the script, including compliance with laws and regulations."
-    echo "+ No Warranty     : The script is provided as is, without any warranties."
-    echo "+ No Liability    : The author of the script are not liable for damages arising from its use."
-    echo "+ Ethical Use     : Users agree to use the script ethically and responsibly, obtaining proper authorization before testing networks."
-    echo "+ Compliance      : Users agree to comply with all applicable laws, regulations, and ethical guidelines."
-    echo "+ Indemnification : Users agree to indemnify the author from any claims arising from their use of the script."
-    echo "+ Modification    : Users may modify the script for personal use but may not distribute modified versions without permission."
-    echo "+ Termination     : The author reserve the right to terminate or suspend access to the script without notice."
-    echo "+ Acceptance      : By using the script, users acknowledge and agree to these terms and conditions."
+    echo "=> By using this script you agree to the following terms :"
+    echo "=> Usage           : The script is for educational and testing purposes only, and users must have the necessary permissions for security testing on wireless networks."
+    echo "=> Responsibility  : Users are solely responsible for their actions using the script, including compliance with laws and regulations."
+    echo "=> No Warranty     : The script is provided as is, without any warranties."
+    echo "=> No Liability    : The author of the script are not liable for damages arising from its use."
+    echo "=> Ethical Use     : Users agree to use the script ethically and responsibly, obtaining proper authorization before testing networks."
+    echo "=> Compliance      : Users agree to comply with all applicable laws, regulations, and ethical guidelines."
+    echo "=> Indemnification : Users agree to indemnify the author from any claims arising from their use of the script."
+    echo "=> Modification    : Users may modify the script for personal use but may not distribute modified versions without permission."
+    echo "=> Termination     : The author reserve the right to terminate or suspend access to the script without notice."
+    echo "=> Acceptance      : By using the script, users acknowledge and agree to these terms and conditions."
     echo ""
 }
 
@@ -55,12 +54,6 @@ function detect_distro {
     if [ -f /etc/os-release ]; then
         source /etc/os-release
         distribution="$ID"
-    elif [ -f /etc/lsb-release ]; then
-        source /etc/lsb-release
-        distribution="$DISTRIB_ID"
-    else
-        echo -e "${RED}> Cannot detect Linux distribution. Exiting.${RESET}"
-        exit 1
     fi
 }
 
@@ -69,11 +62,11 @@ function install_tools {
     for tool in ${tools[@]}; do
         if ! command -v $tool &> /dev/null; then
             case $distribution in
-                ubuntu|kali|debian)
-                    apt-get update -y
-                    apt-get install $tool -y
+                ubuntu|kali|debian|linuxmint)
+                    apt update -y
+                    apt install $tool -y
                     ;;
-                fedora)
+                fedora|almalinux|rocky)
                     dnf update -y
                     dnf install $tool -y
                     ;;
@@ -93,7 +86,6 @@ function setup_network {
     interface=${interface:-$default_interface}
     read -p "> Enter the PATH and NAME to save the capfile [/path/name] : " cap
     cap=${cap:-"$(pwd)/$(date +%T)"}
-    
     systemctl stop wpa_supplicant.service
     systemctl stop NetworkManager.service
     systemctl daemon-reload
