@@ -62,15 +62,16 @@ function install_tools {
     for tool in ${tools[@]}; do
         if ! command -v $tool &> /dev/null; then
             case $distribution in
-                ubuntu|kali|debian|linuxmint)
+                ubuntu|kali|debian|linuxmint|zorin)
                     apt update -y
                     apt install $tool -y
                     ;;
-                fedora|almalinux|rocky)
+                fedora)
                     dnf update -y
                     dnf install $tool -y
                     ;;
                 arch)
+                    pacman -Sy
                     pacman -S --noconfirm $tool
                     ;;
                 *)
@@ -132,7 +133,7 @@ function start_cracking {
                     exit 1
                     ;;
             esac
-            hashcat -a 0 -m 22000 $cap.hash $wordlist -o $cap.hacked
+            hashcat -a 0 -m 22000 -w 4 $cap.hash $wordlist -o $cap.hacked
             while IFS=: read -r _ _ _ SSID PASSWORD; do
                 if [[ -n $SSID && -n $PASSWORD ]]; then
                     echo -e "${RED}> Adding network SSID: $SSID with PASSWORD: $PASSWORD ${RESET}"
